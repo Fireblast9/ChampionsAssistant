@@ -1,10 +1,15 @@
 import BackButton from "../components/BackButton";
+import TeamSelect from "../components/TeamSelect";
+import { getTeamNames } from "../teams/actions";
 
-export default function Calc() {
+export default async function Calc() {
+    const teams = await getTeamNames();
+    console.log(teams)
+
     return (
         <div className="flex flex-col">
             <BackButton />
-            We calcin
+            <TeamSelect teams={teams} />
         </div>
     );
 }

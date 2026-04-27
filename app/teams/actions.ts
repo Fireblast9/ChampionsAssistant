@@ -1,9 +1,9 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { connectDB } from "@/lib/db";
 import { Team } from "@/lib/models/team";
 import { parseShowdown } from "@/lib/showdown-parser";
+import { revalidatePath } from "next/cache";
 
 export async function getTeam(id: string) {
   await connectDB();
@@ -17,12 +17,21 @@ export async function getTeam(id: string) {
 }
 
 export async function getTeams() {
-  console.log("[getTeams] Connecting to DB...");
   await connectDB();
-  console.log("[getTeams] Fetching teams...");
   const teams = await Team.find().sort({ createdAt: -1 }).lean();
-  console.log(`[getTeams] Found ${teams.length} team(s)`);
   return teams.map((t) => ({ ...t, _id: t._id.toString() }));
+}
+
+export async function deleteTeam(id: string){
+    await connectDB();
+    await Team.deleteOne({"_id": id});
+    revalidatePath("/teams")
+}
+
+export async function getTeamNames() {
+  await connectDB();
+  const teams = await Team.find().select("_id name").sort({ createdAt: -1 }).lean();
+  return teams.map((t) => ({ _id: t._id.toString(), name: t.name as string }));
 }
 
 export async function createTeam(_prevState: unknown, formData: FormData) {

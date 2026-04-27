@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useActionState } from "react";
+import { useActionState, useState } from "react";
 import { createTeam } from "../actions";
 
 export default function CreateTeamForm() {
@@ -15,14 +15,14 @@ export default function CreateTeamForm() {
         <button
           type="button"
           onClick={() => setMode("url")}
-          className={`px-4 py-1 border-2 border-current rounded-sm transition-colors duration-200 ${mode === "url" ? "bg-white text-black" : "hover:bg-white hover:text-black"}`}
+          className={`px-4 py-1 border-2 border-current rounded-sm transition-colors duration-200 cursor-pointer ${mode === "url" ? "bg-white text-black" : "hover:bg-white hover:text-black"}`}
         >
           Pokepaste URL
         </button>
         <button
           type="button"
           onClick={() => setMode("paste")}
-          className={`px-4 py-1 border-2 border-current rounded-sm transition-colors duration-200 ${mode === "paste" ? "bg-white text-black" : "hover:bg-white hover:text-black"}`}
+          className={`px-4 py-1 border-2 border-current rounded-sm transition-colors duration-200 cursor-pointer ${mode === "paste" ? "bg-white text-black" : "hover:bg-white hover:text-black"}`}
         >
           Showdown Paste
         </button>
@@ -58,7 +58,7 @@ export default function CreateTeamForm() {
       <button
         type="submit"
         disabled={pending}
-        className="self-start border-2 border-current rounded-sm px-4 py-1 transition-colors duration-200 hover:bg-white hover:text-black disabled:opacity-50"
+        className="self-start border-2 border-current rounded-sm px-4 py-1 transition-colors duration-200 hover:bg-white hover:text-black disabled:opacity-50 cursor-pointer"
       >
         {pending ? "Importing..." : "Import"}
       </button>
