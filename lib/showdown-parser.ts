@@ -12,7 +12,9 @@ export interface ParsedPokemon {
   moves: string[];
 }
 
-function parseFirstLine(line: string): Pick<ParsedPokemon, "species" | "nickname" | "gender" | "item"> {
+function parseFirstLine(
+  line: string,
+): Pick<ParsedPokemon, "species" | "nickname" | "gender" | "item"> {
   let rest = line;
   let item: string | undefined;
 
@@ -28,7 +30,12 @@ function parseFirstLine(line: string): Pick<ParsedPokemon, "species" | "nickname
 
   const nicknameMatch = rest.match(/^(.+)\s+\((.+)\)$/);
   if (nicknameMatch) {
-    return { nickname: nicknameMatch[1].trim(), species: nicknameMatch[2].trim(), gender, item };
+    return {
+      nickname: nicknameMatch[1].trim(),
+      species: nicknameMatch[2].trim(),
+      gender,
+      item,
+    };
   }
 
   return { species: rest.trim(), gender, item };
@@ -49,8 +56,13 @@ export function parseShowdown(text: string): ParsedPokemon[] {
   console.log(`[parser] Split into ${blocks.length} block(s)`);
 
   return blocks.flatMap((block, i) => {
-    const lines = block.trim().split("\n").map((l) => l.trim());
-    console.log(`[parser] Block ${i + 1}: ${lines.length} line(s), first line: "${lines[0]}"`);
+    const lines = block
+      .trim()
+      .split("\n")
+      .map((l) => l.trim());
+    console.log(
+      `[parser] Block ${i + 1}: ${lines.length} line(s), first line: "${lines[0]}"`,
+    );
 
     if (!lines[0]) {
       console.log(`[parser] Block ${i + 1}: skipped (empty)`);
@@ -58,7 +70,10 @@ export function parseShowdown(text: string): ParsedPokemon[] {
     }
 
     const firstLineParsed = parseFirstLine(lines[0]);
-    console.log(`[parser] Block ${i + 1}: parsed first line →`, firstLineParsed);
+    console.log(
+      `[parser] Block ${i + 1}: parsed first line →`,
+      firstLineParsed,
+    );
 
     const mon: ParsedPokemon = {
       ...firstLineParsed,
@@ -73,34 +88,23 @@ export function parseShowdown(text: string): ParsedPokemon[] {
         mon.moves.push(line.slice(2).trim());
       } else if (line.startsWith("Ability: ")) {
         mon.ability = line.slice(9).trim();
-        console.log(`[parser] Block ${i + 1}: ability → ${mon.ability}`);
       } else if (line.startsWith("Level: ")) {
         mon.level = Number.parseInt(line.slice(7));
-        console.log(`[parser] Block ${i + 1}: level → ${mon.level}`);
       } else if (line.startsWith("EVs: ")) {
         mon.evs = parseStats(line.slice(5));
-        console.log(`[parser] Block ${i + 1}: evs →`, mon.evs);
       } else if (line.startsWith("IVs: ")) {
         mon.ivs = parseStats(line.slice(5));
-        console.log(`[parser] Block ${i + 1}: ivs →`, mon.ivs);
       } else if (line.endsWith(" Nature")) {
         mon.nature = line.replace(" Nature", "").trim();
-        console.log(`[parser] Block ${i + 1}: nature → ${mon.nature}`);
       } else if (line === "Shiny: Yes") {
         mon.shiny = true;
-      } else {
-        console.log(`[parser] Block ${i + 1}: unrecognized line → "${line}"`);
       }
     }
 
-    console.log(`[parser] Block ${i + 1}: moves → ${mon.moves.join(", ")}`);
-
     if (!mon.species) {
-      console.log(`[parser] Block ${i + 1}: skipped (no species)`);
       return [];
     }
 
-    console.log(`[parser] Block ${i + 1}: ✓ ${mon.species}`);
     return [mon];
   });
 }

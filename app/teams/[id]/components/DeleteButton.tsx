@@ -7,7 +7,8 @@ import { deleteTeam } from "../../actions";
 
 export default function DeleteButton({
   id,
-}: Readonly<{ id: Readonly<string> }>) {
+  name,
+}: Readonly<{ id: Readonly<string>; name: Readonly<string> }>) {
   const [confirmationOpen, setConfirmationOpen] = useState(false);
 
   function handleDelete(id: string) {
@@ -27,7 +28,7 @@ export default function DeleteButton({
       <Modal
         isOpen={confirmationOpen}
         title="Delete Confirmation"
-        message="Are you sure you want to delete TODO: fix"
+        message={`Are you sure you want to delete team: ${name}`}
         onCancel={() => setConfirmationOpen(false)}
         onConfirm={() => handleDelete(id)}
       />
