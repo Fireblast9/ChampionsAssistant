@@ -3,11 +3,14 @@ import mongoose from "mongoose";
 const MONGODB_URI = process.env.MONGODB_URI!;
 
 if (!MONGODB_URI) {
-  throw new Error("MONGODB_URI is not defined in environment variables");
+  console.error("MONGODB_URI is not defined in environment variables");
 }
 
 declare global {
-  var mongoose: { conn: mongoose.Connection | null; promise: Promise<mongoose.Connection> | null };
+  var mongoose: {
+    conn: mongoose.Connection | null;
+    promise: Promise<mongoose.Connection> | null;
+  };
 }
 
 let cached = global.mongoose;
