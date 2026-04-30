@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 
 const nogard = localFont({
-  src: "../public/fonts/nogard_text.ttf",
+  src: "../fonts/nogard_text.ttf",
 });
 
 export const metadata: Metadata = {
