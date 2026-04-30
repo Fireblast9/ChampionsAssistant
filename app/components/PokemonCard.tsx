@@ -6,7 +6,7 @@ interface PokemonCardProps {
   pokemon: IPokemon;
   priority?: boolean;
   small?: boolean;
-  left: boolean;
+  left?: boolean;
 }
 
 export default function PokemonCard({
