@@ -9,8 +9,10 @@ import TeamSelect from "./TeamSelect";
 export default function TeamViewer({
   teamNames,
   left = true,
-}: Readonly<{ teamNames: Team[]; left?: boolean }>) {
+  onSelect,
+}: Readonly<{ teamNames: Team[]; left?: boolean; onSelect: (mon: ITeam["pokemon"][number]) => void }>) {
   const [team, setTeam] = useState<ITeam | null>(null);
+  const [selectedSpecies, setSelectedSpecies] = useState<string | null>(null);
 
   return (
     <div>
@@ -23,6 +25,8 @@ export default function TeamViewer({
             key={mon.species}
             left={left}
             priority={i === 0}
+            selected={selectedSpecies === mon.species}
+            onClick={() => { setSelectedSpecies(mon.species); onSelect(mon); }}
           />
         ))}
       </div>

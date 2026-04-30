@@ -1,5 +1,5 @@
 import BackButton from "../components/BackButton";
-import TeamViewer from "../components/TeamViewer";
+import CalcShell from "../components/CalcShell";
 import { getTeamNames } from "../teams/actions";
 
 export default async function Calc() {
@@ -8,11 +8,7 @@ export default async function Calc() {
   return (
     <>
       <BackButton href="/" />
-      <div className="flex justify-between mx-4">
-        <TeamViewer teamNames={teamsNames} />
-        {/* <Calculator /> */}
-        <TeamViewer teamNames={teamsNames} left={false} />
-      </div>
+      <CalcShell teamNames={teamsNames} />
     </>
   );
 }

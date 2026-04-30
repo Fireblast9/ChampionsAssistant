@@ -7,6 +7,8 @@ interface PokemonCardProps {
   priority?: boolean;
   small?: boolean;
   left?: boolean;
+  selected?: boolean;
+  onClick?: () => void;
 }
 
 export default function PokemonCard({
@@ -14,12 +16,15 @@ export default function PokemonCard({
   priority = false,
   small = false,
   left,
+  selected = false,
+  onClick,
 }: Readonly<PokemonCardProps>) {
   const evEntries = Object.entries(pokemon.evs ?? {}).filter(([, v]) => v > 0);
 
   return (
     <div
-      className={`border-2 border-current rounded-sm p-4 gap-4 ${small ? "cursor-pointer w-fit my-2" : "flex"}`}
+      className={`border-2 rounded-sm p-4 gap-4 ${selected ? "border-yellow-400" : "border-current"} ${small ? "cursor-pointer w-fit my-2" : "flex"}`}
+      onClick={small ? onClick : undefined}
     >
       <div
         className={`shrink-0 ${small ? "w-18 h-18" : "w-24 h-24"} relative self-center`}
@@ -29,6 +34,7 @@ export default function PokemonCard({
             src={pokemon.sprite}
             alt={pokemon.species}
             fill
+            sizes={"96px"}
             className={`${left && small ? "scale-x-[-1]" : ""} object-fit`}
             loading={priority ? "eager" : "lazy"}
           />
