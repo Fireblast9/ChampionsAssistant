@@ -1,0 +1,34 @@
+services:
+  champions_assistant:
+    container_name: champions_assistant
+    restart: always
+    # use for local development
+    build: .
+    # use for stable deployment
+    # image: fireblast/champions_assistant
+    platform: linux/amd64
+    env_file:
+      - .env.local
+    ports:
+      - 3000:3000
+
+  mongodb:
+    container_name: mongodb
+    restart: always
+    image: mongodb:8
+    environment:
+      - MONGODB_USERNAME=user
+      - MONGODB_PASSWORD=password
+      - MONGODB_ROOT_PASSWORD=password
+      - MONGODB_DATABASE=champions_assistant
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo:/data/db
+
+volumes:
+  mongo:
+
+networks:
+  default:
+    name: champions_assistant

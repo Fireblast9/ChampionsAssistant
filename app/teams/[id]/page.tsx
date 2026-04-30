@@ -31,3 +31,5 @@ export default async function TeamPage({
     </div>
   );
 }
+
+export const dynamic = "force-dynamic";

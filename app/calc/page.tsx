@@ -12,3 +12,5 @@ export default async function Calc() {
     </>
   );
 }
+
+export const dynamic = "force-dynamic";

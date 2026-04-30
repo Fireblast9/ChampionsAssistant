@@ -1,3 +1,4 @@
+import pokeball from "@/images/pokeball.png";
 import Image from "next/image";
 import HomeButton from "./components/HomeButton";
 
@@ -9,24 +10,14 @@ export default function Home() {
         extraClasses="pb-[20%] text-blue-500 border-blue-500"
       >
         Teams
-        <Image
-          src="/images/pokeball.png"
-          alt="Pokeball"
-          width={64}
-          height={64}
-        />
+        <Image src={pokeball} alt="Pokeball" width={64} height={64} />
       </HomeButton>
       <HomeButton
         href="/calc"
         extraClasses="pt-[20%] text-green-500 border-green-500"
       >
         Calc
-        <Image
-          src="/images/pokeball.png"
-          alt="Pokeball"
-          width={64}
-          height={64}
-        />
+        <Image src={pokeball} alt="Pokeball" width={64} height={64} />
       </HomeButton>
     </main>
   );
