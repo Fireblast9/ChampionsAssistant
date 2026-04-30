@@ -1,15 +1,18 @@
 import BackButton from "../components/BackButton";
-import TeamSelect from "../components/TeamSelect";
+import TeamViewer from "../components/TeamViewer";
 import { getTeamNames } from "../teams/actions";
 
 export default async function Calc() {
-    const teams = await getTeamNames();
-    console.log(teams)
+  const teamsNames = await getTeamNames();
 
-    return (
-        <div className="flex flex-col">
-            <BackButton />
-            <TeamSelect teams={teams} />
-        </div>
-    );
+  return (
+    <>
+      <BackButton href="/" />
+      <div className="flex justify-between mx-4">
+        <TeamViewer teamNames={teamsNames} />
+        {/* <Calculator /> */}
+        <TeamViewer teamNames={teamsNames} left={false} />
+      </div>
+    </>
+  );
 }

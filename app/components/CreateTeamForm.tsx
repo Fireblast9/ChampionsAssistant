@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { createTeam } from "../actions";
+import { createTeam } from "../teams/actions";
 
 export default function CreateTeamForm() {
   const [mode, setMode] = useState<"url" | "paste">("url");

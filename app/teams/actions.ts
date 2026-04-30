@@ -1,19 +1,15 @@
 "use server";
 
 import { connectDB } from "@/lib/db";
-import { Team } from "@/lib/models/team";
+import { ITeam, Team } from "@/lib/models/team";
+import { getPokemonSprite } from "@/lib/pokeapi";
 import { parseShowdown } from "@/lib/showdown-parser";
 import { revalidatePath } from "next/cache";
 
 export async function getTeam(id: string) {
   await connectDB();
-  const team = await Team.findById(id).lean();
-  if (!team) return null;
-  return {
-    ...team,
-    _id: team._id.toString(),
-    pokemon: team.pokemon?.map((p: any) => ({ ...p, _id: p._id?.toString() })) ?? [],
-  };
+  const team = (await Team.findById(id).lean()) as ITeam;
+  return team ? { ...team, _id: team._id.toString() } : null;
 }
 
 export async function getTeams() {
@@ -22,15 +18,18 @@ export async function getTeams() {
   return teams.map((t) => ({ ...t, _id: t._id.toString() }));
 }
 
-export async function deleteTeam(id: string){
-    await connectDB();
-    await Team.deleteOne({"_id": id});
-    revalidatePath("/teams")
+export async function deleteTeam(id: string) {
+  await connectDB();
+  await Team.deleteOne({ _id: id });
+  revalidatePath("/teams");
 }
 
 export async function getTeamNames() {
   await connectDB();
-  const teams = await Team.find().select("_id name").sort({ createdAt: -1 }).lean();
+  const teams = await Team.find()
+    .select("_id name")
+    .sort({ createdAt: -1 })
+    .lean();
   return teams.map((t) => ({ _id: t._id.toString(), name: t.name as string }));
 }
 
@@ -66,7 +65,18 @@ export async function createTeam(_prevState: unknown, formData: FormData) {
   }
 
   const pokemon = parseShowdown(paste);
-  console.log(`[createTeam] Parsed ${pokemon.length} Pokémon:`, pokemon.map((p) => p.species));
+  console.log(
+    `[createTeam] Parsed ${pokemon.length} Pokémon:`,
+    pokemon.map((p) => p.species),
+  );
+
+  for (let i = 0; i < pokemon.length; i++) {
+    const sprite = await getPokemonSprite(
+      pokemon[i].species,
+      pokemon[i].gender,
+    );
+    pokemon[i] = { ...pokemon[i], sprite: sprite };
+  }
 
   await connectDB();
   const team = await Team.create({ name, pokemon });

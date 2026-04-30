@@ -12,6 +12,7 @@ export interface IPokemon {
   nature?: string;
   shiny: boolean;
   moves: string[];
+  sprite: string;
 }
 
 export interface ITeam {
@@ -21,26 +22,33 @@ export interface ITeam {
   createdAt: Date;
 }
 
-const PokemonSchema = new Schema<IPokemon>({
-  species: { type: String, required: true },
-  nickname: String,
-  gender: { type: String, enum: ["M", "F"] },
-  item: String,
-  ability: String,
-  level: Number,
-  evs: { type: Object, default: {} },
-  ivs: { type: Object, default: {} },
-  nature: String,
-  shiny: { type: Boolean, default: false },
-  moves: [String],
-});
+const PokemonSchema = new Schema<IPokemon>(
+  {
+    species: { type: String, required: true },
+    nickname: String,
+    gender: { type: String, enum: ["M", "F"] },
+    item: String,
+    ability: String,
+    level: Number,
+    evs: { type: Object, default: {} },
+    ivs: { type: Object, default: {} },
+    nature: String,
+    shiny: { type: Boolean, default: false },
+    moves: [String],
+    sprite: String,
+  },
+  {
+    _id: false,
+  },
+);
 
 const TeamSchema = new Schema<ITeam>(
   {
     name: { type: String, required: true },
     pokemon: { type: [PokemonSchema], default: [] },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export const Team = mongoose.models.Team ?? mongoose.model<ITeam>("Team", TeamSchema);
+export const Team =
+  mongoose.models.Team ?? mongoose.model<ITeam>("Team", TeamSchema);

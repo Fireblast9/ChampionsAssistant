@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
-import Modal from "../../../components/Modal";
-import { deleteTeam } from "../../actions";
+import { deleteTeam } from "../teams/actions";
+import Modal from "./Modal";
 
 export default function DeleteButton({
   id,

@@ -10,6 +10,7 @@ export interface ParsedPokemon {
   nature?: string;
   shiny: boolean;
   moves: string[];
+  sprite?: string;
 }
 
 function parseFirstLine(

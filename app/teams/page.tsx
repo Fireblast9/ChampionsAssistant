@@ -1,15 +1,15 @@
 import Link from "next/link";
 import BackButton from "../components/BackButton";
-import DeleteButton from "./[id]/components/DeleteButton";
+import CreateTeamForm from "../components/CreateTeamForm";
+import DeleteButton from "../components/DeleteButton";
 import { getTeams } from "./actions";
-import CreateTeamForm from "./components/CreateTeamForm";
 
 export default async function Teams() {
   const teams = await getTeams();
 
   return (
     <div className="flex flex-col p-8">
-      <BackButton />
+      <BackButton href="/" />
       <h1 className="text-4xl mt-6 mb-2">Teams</h1>
       <CreateTeamForm />
       <ul className="mt-8 flex flex-col gap-3">
