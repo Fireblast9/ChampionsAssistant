@@ -1,6 +1,6 @@
 const SPECIES_OVERRIDES: Record<string, string> = {
-  "aegislash": "aegislash-shield",
-  "maushold": "maushold-family-of-four",
+  aegislash: "aegislash-shield",
+  maushold: "maushold-family-of-four",
   "maushold-four": "maushold-family-of-four",
   "maushold-three": "maushold-family-of-three",
   "tauros-paldea": "tauros-paldea-combat-breed",
@@ -11,6 +11,7 @@ const SPECIES_OVERRIDES: Record<string, string> = {
   "sinistcha-masterpiece": "sinistcha",
   "sinistcha-artisan": "sinistcha",
   "sinistcha-unremarkable": "sinistcha",
+  palafin: "palafin-hero",
 };
 
 const GENDER_SPECIES = new Set(["basculegion"]);
