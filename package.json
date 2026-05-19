@@ -9,12 +9,15 @@
     "start": "next start",
     "lint": "eslint"
   },
+  "engines": {
+    "node": "^25"
+  },
   "dependencies": {
     "@smogon/calc": "^0.11.0",
     "mongoose": "^9.5.0",
-    "next": "16.2.4",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
+    "next": "^16.2.4",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
     "react-icons": "^5.6.0"
   },
   "devDependencies": {
@@ -23,7 +26,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.4",
+    "eslint-config-next": "^16.2.4",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
