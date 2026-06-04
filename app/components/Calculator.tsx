@@ -402,7 +402,7 @@ export default function Calculator({
   }
 
   return (
-    <div className="flex flex-col gap-3 shrink-0 px-2 text-sm">
+    <div className="flex flex-col gap-3 shrink-0 w-96 px-2 text-sm">
       {/* Header */}
       <div className="flex justify-between items-center text-base font-bold border-b border-gray-700 pb-1">
         <span className="text-blue-400">{attacker?.species ?? "Attacker"}</span>
@@ -424,7 +424,7 @@ export default function Calculator({
               results={atkResults}
               selectedIndex={selectedAtk}
               onSelect={(i) => {
-                setSelectedAtk(i);
+                setSelectedAtk((prev) => (prev === i ? null : i));
                 setSelectedDef(null);
               }}
             />
@@ -434,7 +434,7 @@ export default function Calculator({
               results={defResults}
               selectedIndex={selectedDef}
               onSelect={(i) => {
-                setSelectedDef(i);
+                setSelectedDef((prev) => (prev === i ? null : i));
                 setSelectedAtk(null);
               }}
             />
@@ -442,7 +442,7 @@ export default function Calculator({
 
           {/* Result description */}
           <div
-            className="text-xs text-gray-300 bg-gray-800/60 rounded p-2 min-h-[2.75rem] border border-gray-700 cursor-pointer leading-relaxed"
+            className="text-xs text-gray-300 bg-gray-800/60 rounded p-2 min-h-[2.75rem] border border-gray-700 cursor-pointer leading-relaxed overflow-hidden"
             onClick={() =>
               selectedDesc && navigator.clipboard.writeText(selectedDesc)
             }

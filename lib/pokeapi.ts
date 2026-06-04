@@ -6,12 +6,14 @@ const SPECIES_OVERRIDES: Record<string, string> = {
   "tauros-paldea": "tauros-paldea-combat-breed",
   "tauros-paldea-blaze": "tauros-paldea-blaze-breed",
   "tauros-paldea-aqua": "tauros-paldea-aqua-breed",
+  "basculegion": "basculegion-male",
   "basculegion-m": "basculegion-male",
   "basculegion-f": "basculegion-female",
   "sinistcha-masterpiece": "sinistcha",
   "sinistcha-artisan": "sinistcha",
   "sinistcha-unremarkable": "sinistcha",
   palafin: "palafin-hero",
+  mimikyu: "mimikyu-disguised",
 };
 
 const GENDER_SPECIES = new Set(["basculegion"]);
