@@ -2,6 +2,7 @@
 
 import { IPokemon } from "@/lib/models/team";
 import {
+  buttonColor,
   gen,
   TERRAIN_OPTIONS,
   WEATHER_OPTIONS,
@@ -177,7 +178,7 @@ function ToggleBtn({
 }: Readonly<{
   label: string;
   active: boolean;
-  color?: "blue" | "green" | "purple" | "orange";
+  color?: buttonColor;
   onClick: () => void;
 }>) {
   const colors = {
@@ -185,6 +186,11 @@ function ToggleBtn({
     green: "bg-green-600 border-green-500 text-white",
     purple: "bg-purple-600 border-purple-500 text-white",
     orange: "bg-orange-600 border-orange-500 text-white",
+    yellow: "bg-yellow-400 border-yellow-300 text-gray-900",
+    brown: "bg-yellow-700 border-yellow-600 text-white",
+    white: "bg-gray-100 border-gray-300 text-gray-900",
+    pink: "bg-pink-300 border-pink-300 text-black",
+    darkpink: "bg-pink-500 border-pink-300 text-white-900",
   };
   return (
     <button
@@ -375,12 +381,12 @@ export function FieldPanel({
         <div>
           <div className="text-xs text-gray-500 mb-1">Weather</div>
           <div className="flex flex-wrap gap-1">
-            {WEATHER_OPTIONS.map(([label, val]) => (
+            {WEATHER_OPTIONS.map(([label, val, color]) => (
               <ToggleBtn
                 key={val}
                 label={label}
                 active={field.weather === val}
-                color="blue"
+                color={color}
                 onClick={() => toggleWeather(val)}
               />
             ))}
@@ -390,12 +396,12 @@ export function FieldPanel({
         <div>
           <div className="text-xs text-gray-500 mb-1">Terrain</div>
           <div className="flex flex-wrap gap-1">
-            {TERRAIN_OPTIONS.map(([label, val]) => (
+            {TERRAIN_OPTIONS.map(([label, val, color]) => (
               <ToggleBtn
                 key={val}
                 label={label}
                 active={field.terrain === val}
-                color="green"
+                color={color}
                 onClick={() => toggleTerrain(val)}
               />
             ))}
@@ -427,7 +433,10 @@ export function FieldPanel({
           color="blue"
           side={field.attackerSide}
           onChange={(patch) =>
-            onChange({ ...field, attackerSide: { ...field.attackerSide, ...patch } })
+            onChange({
+              ...field,
+              attackerSide: { ...field.attackerSide, ...patch },
+            })
           }
         />
         <SideConditions
@@ -435,7 +444,10 @@ export function FieldPanel({
           color="red"
           side={field.defenderSide}
           onChange={(patch) =>
-            onChange({ ...field, defenderSide: { ...field.defenderSide, ...patch } })
+            onChange({
+              ...field,
+              defenderSide: { ...field.defenderSide, ...patch },
+            })
           }
           align="right"
         />

@@ -65,16 +65,27 @@ export const DEFAULT_FIELD: FieldState = {
   isWonderRoom: false,
 };
 
-export const WEATHER_OPTIONS: [string, WeatherOption][] = [
-  ["Sun", "Sun"],
-  ["Rain", "Rain"],
-  ["Sand", "Sand"],
-  ["Snow", "Snow"],
+export type buttonColor =
+  | "blue"
+  | "green"
+  | "purple"
+  | "orange"
+  | "yellow"
+  | "brown"
+  | "white"
+  | "pink"
+  | "darkpink";
+
+export const WEATHER_OPTIONS: [string, WeatherOption, buttonColor][] = [
+  ["Sun", "Sun", "yellow"],
+  ["Rain", "Rain", "blue"],
+  ["Sand", "Sand", "brown"],
+  ["Snow", "Snow", "white"],
 ];
 
-export const TERRAIN_OPTIONS: [string, TerrainOption][] = [
-  ["Electric", "Electric"],
-  ["Grassy", "Grassy"],
-  ["Misty", "Misty"],
-  ["Psychic", "Psychic"],
+export const TERRAIN_OPTIONS: [string, TerrainOption, buttonColor][] = [
+  ["Electric", "Electric", "yellow"],
+  ["Grassy", "Grassy", "green"],
+  ["Misty", "Misty", "pink"],
+  ["Psychic", "Psychic", "darkpink"],
 ];
