@@ -2,7 +2,7 @@
 
 import { ITeam } from "@/lib/models/team";
 import { Team } from "@/lib/types";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { getTeam } from "../teams/actions";
 
 export default function TeamSelect({
@@ -10,7 +10,7 @@ export default function TeamSelect({
   setTeam,
 }: Readonly<{
   teamNames: Team[];
-  setTeam: Dispatch<SetStateAction<ITeam | null>>;
+  setTeam: (team: ITeam | null) => void;
 }>) {
   const [value, setValue] = useState("");
 

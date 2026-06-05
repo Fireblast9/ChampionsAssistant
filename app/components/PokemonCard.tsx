@@ -7,8 +7,14 @@ interface PokemonCardProps {
   priority?: boolean;
   small?: boolean;
   left?: boolean;
-  selected?: boolean;
+  slot?: 1 | 2 | null;
   onClick?: () => void;
+}
+
+function slotStyles(s: 1 | 2 | null) {
+  if (s === 1) return { border: "border-yellow-400", badge: "bg-yellow-400 text-black" };
+  if (s === 2) return { border: "border-orange-400", badge: "bg-orange-400 text-black" };
+  return { border: "border-current", badge: "" };
 }
 
 export default function PokemonCard({
@@ -16,16 +22,22 @@ export default function PokemonCard({
   priority = false,
   small = false,
   left,
-  selected = false,
+  slot = null,
   onClick,
 }: Readonly<PokemonCardProps>) {
   const evEntries = Object.entries(pokemon.evs ?? {}).filter(([, v]) => v > 0);
+  const { border: borderClass, badge: badgeClass } = slotStyles(slot);
 
   return (
     <div
-      className={`border-2 rounded-sm p-4 gap-4 ${selected ? "border-yellow-400" : "border-current"} ${small ? "cursor-pointer w-fit my-2" : "flex"}`}
+      className={`relative border-2 rounded-sm p-4 gap-4 ${borderClass} ${small ? "cursor-pointer w-fit my-2" : "flex"}`}
       onClick={small ? onClick : undefined}
     >
+      {small && slot && (
+        <div className={`absolute top-0 right-0 text-[10px] font-bold px-1 rounded-bl ${badgeClass}`}>
+          {slot}
+        </div>
+      )}
       <div
         className={`shrink-0 ${small ? "w-18 h-18" : "w-24 h-24"} relative self-center`}
       >

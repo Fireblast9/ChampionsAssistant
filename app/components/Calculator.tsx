@@ -2,7 +2,6 @@
 
 import { IPokemon } from "@/lib/models/team";
 import {
-  DEFAULT_FIELD,
   gen,
   TERRAIN_OPTIONS,
   WEATHER_OPTIONS,
@@ -17,12 +16,10 @@ import {
   calculate,
   Field,
   Side,
-  type StatsTable,
 } from "@smogon/calc";
 import type {
   AbilityName,
   ItemName,
-  MoveName,
   NatureName,
 } from "@smogon/calc/dist/data/interface";
 import { useMemo, useState } from "react";
@@ -33,9 +30,9 @@ function buildCalcPokemon(p: IPokemon): CalcPokemon {
     ability: p.ability as AbilityName | undefined,
     item: p.item as ItemName | undefined,
     nature: p.nature as NatureName | undefined,
-    evs: p.evs as Partial<StatsTable>,
-    ivs: p.ivs as Partial<StatsTable>,
-    gender: p.gender === "M" ? "M" : p.gender === "F" ? "F" : undefined,
+    evs: p.evs,
+    ivs: p.ivs,
+    gender: p.gender,
   });
 }
 
@@ -48,7 +45,7 @@ function buildField(fs: FieldState): Field {
     isWonderRoom: fs.isWonderRoom,
     attackerSide: new Side({
       isSR: fs.attackerSide.isSR,
-      spikes: fs.attackerSide.spikes as 0 | 1 | 2 | 3,
+      spikes: fs.attackerSide.spikes,
       isReflect: fs.attackerSide.isReflect,
       isLightScreen: fs.attackerSide.isLightScreen,
       isAuroraVeil: fs.attackerSide.isAuroraVeil,
@@ -58,7 +55,7 @@ function buildField(fs: FieldState): Field {
     }),
     defenderSide: new Side({
       isSR: fs.defenderSide.isSR,
-      spikes: fs.defenderSide.spikes as 0 | 1 | 2 | 3,
+      spikes: fs.defenderSide.spikes,
       isReflect: fs.defenderSide.isReflect,
       isLightScreen: fs.defenderSide.isLightScreen,
       isAuroraVeil: fs.defenderSide.isAuroraVeil,
@@ -78,23 +75,23 @@ interface MoveResult {
 }
 
 function calcMoves(
-  attacker: IPokemon,
-  defender: IPokemon,
+  movingMon: IPokemon,
+  targetMon: IPokemon,
   field: Field,
 ): (MoveResult | null)[] {
   let calcAttacker: CalcPokemon;
   let calcDefender: CalcPokemon;
   try {
-    calcAttacker = buildCalcPokemon(attacker);
-    calcDefender = buildCalcPokemon(defender);
+    calcAttacker = buildCalcPokemon(movingMon);
+    calcDefender = buildCalcPokemon(targetMon);
   } catch {
     return [null, null, null, null];
   }
 
-  return attacker.moves.map((moveName) => {
+  return movingMon.moves.map((moveName) => {
     if (!moveName || moveName === "(No Move)") return null;
     try {
-      const move = new CalcMove(gen, moveName as MoveName);
+      const move = new CalcMove(gen, moveName);
       const result = calculate(gen, calcAttacker, calcDefender, move, field);
       const range = result.range();
       const hp = calcDefender.stats.hp;
@@ -115,17 +112,17 @@ function calcMoves(
   });
 }
 
+function damageColor(high: number): string {
+  if (high >= 100) return "bg-red-500";
+  if (high >= 75) return "bg-orange-500";
+  if (high >= 50) return "bg-yellow-500";
+  return "bg-green-500";
+}
+
 function DamageBar({ low, high }: Readonly<{ low: number; high: number }>) {
   const cappedLow = low >= 100 ? 0 : Math.min(low, 100);
   const cappedHigh = Math.min(high, 100);
-  const color =
-    high >= 100
-      ? "bg-red-500"
-      : high >= 75
-        ? "bg-orange-500"
-        : high >= 50
-          ? "bg-yellow-500"
-          : "bg-green-500";
+  const color = damageColor(high);
   return (
     <div className="w-full h-1.5 bg-gray-700 rounded mt-0.5 relative">
       <div
@@ -249,9 +246,9 @@ function MoveColumn({
         {species} →
       </div>
       <div className="flex flex-col gap-0.5">
-        {(results ?? Array(4).fill(null)).map((r, i) => (
+        {(results ?? new Array(4).fill(null)).map((r, i) => (
           <MoveRow
-            key={i}
+            key={r?.name ?? `slot-${i}`}
             result={r}
             selected={selectedIndex === i}
             onClick={() => onSelect(i)}
@@ -267,19 +264,22 @@ function SideConditions({
   color,
   side,
   onChange,
+  align = "left",
 }: Readonly<{
   label: string;
   color: "blue" | "red";
   side: SideState;
   onChange: (patch: Partial<SideState>) => void;
+  align?: "left" | "right";
 }>) {
   const colorClass = color === "blue" ? "text-blue-400" : "text-red-400";
+  const isRight = align === "right";
   return (
-    <div>
+    <div className={isRight ? "flex flex-col items-end" : ""}>
       <div className={`text-xs ${colorClass} font-medium mb-1.5 truncate`}>
         {label}
       </div>
-      <div className="flex flex-col gap-1">
+      <div className={`flex flex-col gap-1 ${isRight ? "items-end" : ""}`}>
         <Toggle
           label="Helping Hand"
           checked={side.isHelpingHand}
@@ -322,10 +322,10 @@ function SideConditions({
 function SpikesControl({
   value,
   onChange,
-}: {
+}: Readonly<{
   value: number;
   onChange: (n: number) => void;
-}) {
+}>) {
   return (
     <div className="flex items-center gap-1 text-xs">
       <span className={value > 0 ? "text-yellow-400" : "text-gray-400"}>
@@ -350,11 +350,110 @@ function SpikesControl({
   );
 }
 
-export default function Calculator({
+// Shared field conditions panel — rendered once in CalcShell
+export function FieldPanel({
+  field,
+  onChange,
+}: Readonly<{
+  field: FieldState;
+  onChange: (f: FieldState) => void;
+}>) {
+  function toggleWeather(w: WeatherOption) {
+    onChange({ ...field, weather: field.weather === w ? "" : w });
+  }
+  function toggleTerrain(t: TerrainOption) {
+    onChange({ ...field, terrain: field.terrain === t ? "" : t });
+  }
+
+  return (
+    <div className="border border-gray-700 rounded p-2.5 flex flex-col gap-2.5 text-sm">
+      <div className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
+        Field Conditions
+      </div>
+
+      <div className="flex gap-6">
+        <div>
+          <div className="text-xs text-gray-500 mb-1">Weather</div>
+          <div className="flex flex-wrap gap-1">
+            {WEATHER_OPTIONS.map(([label, val]) => (
+              <ToggleBtn
+                key={val}
+                label={label}
+                active={field.weather === val}
+                color="blue"
+                onClick={() => toggleWeather(val)}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <div className="text-xs text-gray-500 mb-1">Terrain</div>
+          <div className="flex flex-wrap gap-1">
+            {TERRAIN_OPTIONS.map(([label, val]) => (
+              <ToggleBtn
+                key={val}
+                label={label}
+                active={field.terrain === val}
+                color="green"
+                onClick={() => toggleTerrain(val)}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="flex gap-3 flex-wrap items-end pb-0.5">
+          <Toggle
+            label="Gravity"
+            checked={field.isGravity}
+            onChange={(v) => onChange({ ...field, isGravity: v })}
+          />
+          <Toggle
+            label="Magic Room"
+            checked={field.isMagicRoom}
+            onChange={(v) => onChange({ ...field, isMagicRoom: v })}
+          />
+          <Toggle
+            label="Wonder Room"
+            checked={field.isWonderRoom}
+            onChange={(v) => onChange({ ...field, isWonderRoom: v })}
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 border-t border-gray-700 pt-2.5">
+        <SideConditions
+          label="Attacker side"
+          color="blue"
+          side={field.attackerSide}
+          onChange={(patch) =>
+            onChange({ ...field, attackerSide: { ...field.attackerSide, ...patch } })
+          }
+        />
+        <SideConditions
+          label="Defender side"
+          color="red"
+          side={field.defenderSide}
+          onChange={(patch) =>
+            onChange({ ...field, defenderSide: { ...field.defenderSide, ...patch } })
+          }
+          align="right"
+        />
+      </div>
+    </div>
+  );
+}
+
+// Per-matchup move panel — rendered 4× in CalcShell
+export default function MovePanel({
   attacker,
   defender,
-}: Readonly<{ attacker: IPokemon | null; defender: IPokemon | null }>) {
-  const [field, setField] = useState<FieldState>(DEFAULT_FIELD);
+  field,
+}: Readonly<{
+  attacker: IPokemon | null;
+  defender: IPokemon | null;
+  field: FieldState;
+}>) {
   const [selectedAtk, setSelectedAtk] = useState<number | null>(null);
   const [selectedDef, setSelectedDef] = useState<number | null>(null);
 
@@ -381,43 +480,28 @@ export default function Calculator({
     [defender, attacker, defCalcField],
   );
 
-  const selectedDesc =
-    selectedAtk !== null && atkResults?.[selectedAtk]
-      ? atkResults[selectedAtk]!.desc
-      : selectedDef !== null && defResults?.[selectedDef]
-        ? defResults[selectedDef]!.desc
-        : null;
-
-  function toggleWeather(w: WeatherOption) {
-    setField((f) => ({ ...f, weather: f.weather === w ? "" : w }));
-  }
-  function toggleTerrain(t: TerrainOption) {
-    setField((f) => ({ ...f, terrain: f.terrain === t ? "" : t }));
-  }
-  function setAtkSide(patch: Partial<SideState>) {
-    setField((f) => ({ ...f, attackerSide: { ...f.attackerSide, ...patch } }));
-  }
-  function setDefSide(patch: Partial<SideState>) {
-    setField((f) => ({ ...f, defenderSide: { ...f.defenderSide, ...patch } }));
+  let selectedDesc: string | null = null;
+  if (selectedAtk !== null && atkResults?.[selectedAtk]) {
+    selectedDesc = atkResults[selectedAtk].desc;
+  } else if (selectedDef !== null && defResults?.[selectedDef]) {
+    selectedDesc = defResults[selectedDef].desc;
   }
 
   return (
-    <div className="flex flex-col gap-3 shrink-0 w-96 px-2 text-sm">
-      {/* Header */}
-      <div className="flex justify-between items-center text-base font-bold border-b border-gray-700 pb-1">
-        <span className="text-blue-400">{attacker?.species ?? "Attacker"}</span>
-        <span className="text-gray-500 text-xs">vs</span>
-        <span className="text-red-400">{defender?.species ?? "Defender"}</span>
+    <div className="flex flex-col gap-2 text-sm border border-gray-700 rounded p-2.5">
+      <div className="flex justify-between items-center text-xs font-bold border-b border-gray-700 pb-1.5">
+        <span className="text-blue-400 truncate">{attacker?.species ?? "—"}</span>
+        <span className="text-gray-600 shrink-0 mx-1">vs</span>
+        <span className="text-red-400 truncate text-right">{defender?.species ?? "—"}</span>
       </div>
 
       {!attacker || !defender ? (
-        <div className="text-center text-gray-500 py-8 text-sm">
-          Select a Pokémon on each side to begin
+        <div className="text-center text-gray-600 py-4 italic text-xs">
+          Select a Pokémon on each side
         </div>
       ) : (
         <>
-          {/* Two-column move results */}
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2 min-h-0">
             <MoveColumn
               species={attacker.species}
               color="blue"
@@ -440,9 +524,8 @@ export default function Calculator({
             />
           </div>
 
-          {/* Result description */}
           <div
-            className="text-xs text-gray-300 bg-gray-800/60 rounded p-2 min-h-[2.75rem] border border-gray-700 cursor-pointer leading-relaxed overflow-hidden"
+            className="text-xs text-gray-300 bg-gray-800/60 rounded p-2 min-h-0 h-11 flex-none overflow-y-auto border border-gray-700 cursor-pointer leading-relaxed"
             onClick={() =>
               selectedDesc && navigator.clipboard.writeText(selectedDesc)
             }
@@ -456,80 +539,6 @@ export default function Calculator({
           </div>
         </>
       )}
-
-      {/* Field Conditions */}
-      <div className="border border-gray-700 rounded p-2.5 flex flex-col gap-2.5">
-        <div className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
-          Field Conditions
-        </div>
-
-        {/* Weather */}
-        <div>
-          <div className="text-xs text-gray-500 mb-1">Weather</div>
-          <div className="flex flex-wrap gap-1">
-            {WEATHER_OPTIONS.map(([label, val]) => (
-              <ToggleBtn
-                key={val}
-                label={label}
-                active={field.weather === val}
-                color="blue"
-                onClick={() => toggleWeather(val)}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Terrain */}
-        <div>
-          <div className="text-xs text-gray-500 mb-1">Terrain</div>
-          <div className="flex flex-wrap gap-1">
-            {TERRAIN_OPTIONS.map(([label, val]) => (
-              <ToggleBtn
-                key={val}
-                label={label}
-                active={field.terrain === val}
-                color="green"
-                onClick={() => toggleTerrain(val)}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Global toggles */}
-        <div className="flex gap-3 flex-wrap">
-          <Toggle
-            label="Gravity"
-            checked={field.isGravity}
-            onChange={(v) => setField((f) => ({ ...f, isGravity: v }))}
-          />
-          <Toggle
-            label="Magic Room"
-            checked={field.isMagicRoom}
-            onChange={(v) => setField((f) => ({ ...f, isMagicRoom: v }))}
-          />
-          <Toggle
-            label="Wonder Room"
-            checked={field.isWonderRoom}
-            onChange={(v) => setField((f) => ({ ...f, isWonderRoom: v }))}
-          />
-        </div>
-
-        {/* Per-side conditions */}
-        <div className="grid grid-cols-2 gap-3 border-t border-gray-700 pt-2.5">
-          <SideConditions
-            label={`${attacker?.species ?? "Attacker"} side`}
-            color="blue"
-            side={field.attackerSide}
-            onChange={setAtkSide}
-          />
-          <SideConditions
-            label={`${defender?.species ?? "Defender"} side`}
-            color="red"
-            side={field.defenderSide}
-            onChange={setDefSide}
-          />
-        </div>
-      </div>
     </div>
   );
 }
