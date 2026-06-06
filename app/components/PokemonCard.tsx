@@ -1,3 +1,4 @@
+import megaEvoIcon from "@/images/MegaEvoIcon.png";
 import { IPokemon } from "@/lib/models/team";
 import { STAT_LABELS } from "@/lib/utilities";
 import Image from "next/image";
@@ -8,12 +9,16 @@ interface PokemonCardProps {
   small?: boolean;
   left?: boolean;
   slot?: 1 | 2 | null;
+  isMega?: boolean;
+  onMegaToggle?: () => void;
   onClick?: () => void;
 }
 
 function slotStyles(s: 1 | 2 | null) {
-  if (s === 1) return { border: "border-yellow-400", badge: "bg-yellow-400 text-black" };
-  if (s === 2) return { border: "border-orange-400", badge: "bg-orange-400 text-black" };
+  if (s === 1)
+    return { border: "border-yellow-400", badge: "bg-yellow-400 text-black" };
+  if (s === 2)
+    return { border: "border-orange-400", badge: "bg-orange-400 text-black" };
   return { border: "border-current", badge: "" };
 }
 
@@ -23,6 +28,8 @@ export default function PokemonCard({
   small = false,
   left,
   slot = null,
+  isMega = false,
+  onMegaToggle,
   onClick,
 }: Readonly<PokemonCardProps>) {
   const evEntries = Object.entries(pokemon.evs ?? {}).filter(([, v]) => v > 0);
@@ -34,9 +41,32 @@ export default function PokemonCard({
       onClick={small ? onClick : undefined}
     >
       {small && slot && (
-        <div className={`absolute top-0 right-0 text-[10px] font-bold px-1 rounded-bl ${badgeClass}`}>
+        <div
+          className={`absolute top-0 right-0 text-[10px] font-bold px-1 rounded-bl ${badgeClass}`}
+        >
           {slot}
         </div>
+      )}
+      {small && onMegaToggle && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onMegaToggle();
+          }}
+          title={isMega ? "Revert to base form" : "Mega Evolve"}
+          className={`absolute bottom-0 right-0 text-[9px] font-bold px-1 py-1 rounded-tl cursor-pointer transition-colors ${
+            isMega
+              ? "bg-purple-500 text-white"
+              : "bg-gray-800/80 text-gray-400 hover:bg-purple-500/60 hover:text-white"
+          }`}
+        >
+          <Image
+            src={megaEvoIcon}
+            width={26}
+            height={26}
+            alt="MegaEvo Button"
+          />
+        </button>
       )}
       <div
         className={`shrink-0 ${small ? "w-18 h-18" : "w-24 h-24"} relative self-center`}

@@ -2,11 +2,31 @@
 
 import { ITeam, IPokemon } from "@/lib/models/team";
 import { Team } from "@/lib/types";
+import { MEGA_MAP } from "@/lib/utilities";
 import { useState } from "react";
 import PokemonCard from "./PokemonCard";
 import TeamSelect from "./TeamSelect";
 
 type Pair = [IPokemon | null, IPokemon | null];
+
+function getMegaEntry(mon: IPokemon) {
+  return (
+    (MEGA_MAP[mon.species] ?? []).find(
+      (m) => m.stone === mon.item || (m.stone === "Dragon Ascent" && mon.moves.includes("Dragon Ascent")),
+    ) ?? null
+  );
+}
+
+function applyMega(pair: Pair, mega: Set<string>): Pair {
+  const transform = (mon: IPokemon | null): IPokemon | null => {
+    if (!mon) return null;
+    const entry = getMegaEntry(mon);
+    if (entry && mega.has(mon.species))
+      return { ...mon, species: entry.megaSpecies };
+    return mon;
+  };
+  return [transform(pair[0]), transform(pair[1])];
+}
 
 export default function TeamViewer({
   teamNames,
@@ -19,10 +39,12 @@ export default function TeamViewer({
 }>) {
   const [team, setTeam] = useState<ITeam | null>(null);
   const [selected, setSelected] = useState<Pair>([null, null]);
+  const [megaActive, setMegaActive] = useState<Set<string>>(new Set());
 
   function handleTeamChange(newTeam: ITeam | null) {
     setTeam(newTeam);
     setSelected([null, null]);
+    setMegaActive(new Set());
     onSelect([null, null]);
   }
 
@@ -40,8 +62,23 @@ export default function TeamViewer({
     } else {
       next = [mon, slot2];
     }
+
+    const nextSpecies = new Set(
+      [next[0]?.species, next[1]?.species].filter((s): s is string => s !== undefined),
+    );
+    const nextMega = new Set([...megaActive].filter((s) => nextSpecies.has(s)));
+
+    setMegaActive(nextMega);
     setSelected(next);
-    onSelect(next);
+    onSelect(applyMega(next, nextMega));
+  }
+
+  function handleMegaToggle(species: string) {
+    const nextMega = new Set(megaActive);
+    if (nextMega.has(species)) nextMega.delete(species);
+    else nextMega.add(species);
+    setMegaActive(nextMega);
+    onSelect(applyMega(selected, nextMega));
   }
 
   function getSlot(species: string): 1 | 2 | null {
@@ -62,6 +99,8 @@ export default function TeamViewer({
             left={left}
             priority={i === 0}
             slot={getSlot(mon.species)}
+            isMega={megaActive.has(mon.species)}
+            onMegaToggle={getMegaEntry(mon) ? () => handleMegaToggle(mon.species) : undefined}
             onClick={() => handleClick(mon)}
           />
         ))}
