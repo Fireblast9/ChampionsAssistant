@@ -22,7 +22,7 @@ function applyMega(pair: Pair, mega: Set<string>): Pair {
     if (!mon) return null;
     const entry = getMegaEntry(mon);
     if (entry && mega.has(mon.species))
-      return { ...mon, species: entry.megaSpecies };
+      return { ...mon, species: entry.megaSpecies, ability: undefined };
     return mon;
   };
   return [transform(pair[0]), transform(pair[1])];

@@ -14,14 +14,6 @@ interface PokemonCardProps {
   onClick?: () => void;
 }
 
-function slotStyles(s: 1 | 2 | null) {
-  if (s === 1)
-    return { border: "border-yellow-400", badge: "bg-yellow-400 text-black" };
-  if (s === 2)
-    return { border: "border-orange-400", badge: "bg-orange-400 text-black" };
-  return { border: "border-current", badge: "" };
-}
-
 export default function PokemonCard({
   pokemon,
   priority = false,
@@ -32,17 +24,21 @@ export default function PokemonCard({
   onMegaToggle,
   onClick,
 }: Readonly<PokemonCardProps>) {
+  function slotStyles() {
+    if (slot && left) return "border-blue-400";
+    if (slot && !left) return "border-red-400";
+    return "border-current";
+  }
   const evEntries = Object.entries(pokemon.evs ?? {}).filter(([, v]) => v > 0);
-  const { border: borderClass, badge: badgeClass } = slotStyles(slot);
 
   return (
     <div
-      className={`relative border-2 rounded-sm p-4 gap-4 ${borderClass} ${small ? "cursor-pointer w-fit my-2" : "flex"}`}
+      className={`relative border-2 rounded-sm p-4 gap-4 ${slotStyles()} ${small ? "cursor-pointer w-fit my-2" : "flex"}`}
       onClick={small ? onClick : undefined}
     >
       {small && slot && (
         <div
-          className={`absolute top-0 right-0 text-[10px] font-bold px-1 rounded-bl ${badgeClass}`}
+          className={`absolute top-0 right-0 text-[10px] font-bold px-1 rounded-bl ${left ? "bg-blue-400" : "bg-red-400"}`}
         >
           {slot}
         </div>
