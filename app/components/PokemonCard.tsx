@@ -1,3 +1,4 @@
+import megaEvoIcon from "@/images/MegaEvoIcon.png";
 import { IPokemon } from "@/lib/models/team";
 import { STAT_LABELS } from "@/lib/utilities";
 import Image from "next/image";
@@ -8,6 +9,8 @@ interface PokemonCardProps {
   small?: boolean;
   left?: boolean;
   slot?: 1 | 2 | null;
+  isMega?: boolean;
+  onMegaToggle?: () => void;
   onClick?: () => void;
 }
 
@@ -17,6 +20,8 @@ export default function PokemonCard({
   small = false,
   left,
   slot = null,
+  isMega = false,
+  onMegaToggle,
   onClick,
 }: Readonly<PokemonCardProps>) {
   function slotStyles() {
@@ -37,6 +42,27 @@ export default function PokemonCard({
         >
           {slot}
         </div>
+      )}
+      {small && onMegaToggle && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onMegaToggle();
+          }}
+          title={isMega ? "Revert to base form" : "Mega Evolve"}
+          className={`absolute bottom-0 right-0 text-[9px] font-bold px-1 py-1 rounded-tl cursor-pointer transition-colors ${
+            isMega
+              ? "bg-purple-500 text-white"
+              : "bg-gray-800/80 text-gray-400 hover:bg-purple-500/60 hover:text-white"
+          }`}
+        >
+          <Image
+            src={megaEvoIcon}
+            width={26}
+            height={26}
+            alt="MegaEvo Button"
+          />
+        </button>
       )}
       <div
         className={`shrink-0 ${small ? "w-18 h-18" : "w-24 h-24"} relative self-center`}
