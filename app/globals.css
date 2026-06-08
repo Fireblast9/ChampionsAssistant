@@ -42,3 +42,7 @@ main:has(.home-button:hover) .home-button:hover {
 .home-button:hover .home-button-content {
   transform: scale(1.15);
 }
+
+.direction-rtl {
+  direction: rtl;
+}

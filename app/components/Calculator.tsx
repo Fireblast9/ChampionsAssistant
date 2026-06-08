@@ -145,9 +145,7 @@ function MoveRow({
 }>) {
   if (!result) {
     return (
-      <div className="px-2 py-1.5 rounded text-sm text-gray-600 italic select-none">
-        —
-      </div>
+      <div className="px-2 py-1.5 rounded text-sm italic select-none">—</div>
     );
   }
   return (
@@ -161,7 +159,7 @@ function MoveRow({
     >
       <div className="flex justify-between items-center gap-2">
         <span className="font-medium truncate">{result.name}</span>
-        <span className="text-xs shrink-0 tabular-nums text-gray-300">
+        <span className="text-xs shrink-0 tabular-nums">
           {result.damagePct[0]}–{result.damagePct[1]}%
         </span>
       </div>
@@ -196,9 +194,7 @@ function ToggleBtn({
     <button
       onClick={onClick}
       className={`px-2 py-0.5 text-xs rounded border transition-colors cursor-pointer ${
-        active
-          ? colors[color]
-          : "border-gray-600 text-gray-400 hover:border-gray-400"
+        active ? colors[color] : "border-gray-600 hover:border-gray-400"
       }`}
     >
       {label}
@@ -223,9 +219,7 @@ function Toggle({
         onChange={(e) => onChange(e.target.checked)}
         className="accent-yellow-500"
       />
-      <span className={checked ? "text-yellow-400" : "text-gray-400"}>
-        {label}
-      </span>
+      <span className={checked ? "text-yellow-400" : ""}>{label}</span>
     </label>
   );
 }
@@ -285,7 +279,7 @@ function SideConditions({
       <div className={`text-xs ${colorClass} font-medium mb-1.5 truncate`}>
         {label}
       </div>
-      <div className={`flex flex-col gap-1 ${isRight ? "items-end" : ""}`}>
+      <div className={`flex flex-col gap-2 ${isRight ? "direction-rtl" : ""}`}>
         <Toggle
           label="Helping Hand"
           checked={side.isHelpingHand}
@@ -334,9 +328,7 @@ function SpikesControl({
 }>) {
   return (
     <div className="flex items-center gap-1 text-xs">
-      <span className={value > 0 ? "text-yellow-400" : "text-gray-400"}>
-        Spikes
-      </span>
+      <span className={value > 0 ? "text-yellow-400" : ""}>Spikes</span>
       <div className="flex gap-0.5">
         {[0, 1, 2, 3].map((n) => (
           <button
@@ -345,7 +337,7 @@ function SpikesControl({
             className={`w-5 h-4 text-[10px] rounded cursor-pointer transition-colors ${
               value === n
                 ? "bg-yellow-500 text-black"
-                : "bg-gray-700 text-gray-400 hover:bg-gray-600"
+                : "bg-gray-700 hover:bg-gray-600"
             }`}
           >
             {n}
@@ -373,13 +365,13 @@ export function FieldPanel({
 
   return (
     <div className="border border-gray-700 rounded p-2.5 flex flex-col gap-2.5 text-sm">
-      <div className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
+      <div className="text-xs font-semibold uppercase tracking-wide">
         Field Conditions
       </div>
 
       <div className="flex gap-6">
         <div>
-          <div className="text-xs text-gray-500 mb-1">Weather</div>
+          <div className="text-xs mb-1">Weather</div>
           <div className="flex flex-wrap gap-1">
             {WEATHER_OPTIONS.map(([label, val, color]) => (
               <ToggleBtn
@@ -394,7 +386,7 @@ export function FieldPanel({
         </div>
 
         <div>
-          <div className="text-xs text-gray-500 mb-1">Terrain</div>
+          <div className="text-xs mb-1">Terrain</div>
           <div className="flex flex-wrap gap-1">
             {TERRAIN_OPTIONS.map(([label, val, color]) => (
               <ToggleBtn
@@ -502,13 +494,17 @@ export default function MovePanel({
   return (
     <div className="flex flex-col gap-2 text-sm border border-gray-700 rounded p-2.5">
       <div className="flex justify-between items-center text-xs font-bold border-b border-gray-700 pb-1.5">
-        <span className="text-blue-400 truncate">{attacker?.species ?? "—"}</span>
-        <span className="text-gray-600 shrink-0 mx-1">vs</span>
-        <span className="text-red-400 truncate text-right">{defender?.species ?? "—"}</span>
+        <span className="text-blue-400 truncate">
+          {attacker?.species ?? "—"}
+        </span>
+        <span className="shrink-0 mx-1">vs</span>
+        <span className="text-red-400 truncate text-right">
+          {defender?.species ?? "—"}
+        </span>
       </div>
 
       {!attacker || !defender ? (
-        <div className="text-center text-gray-600 py-4 italic text-xs">
+        <div className="text-center py-4 italic text-xs">
           Select a Pokémon on each side
         </div>
       ) : (
@@ -537,16 +533,14 @@ export default function MovePanel({
           </div>
 
           <div
-            className="text-xs text-gray-300 bg-gray-800/60 rounded p-2 min-h-0 h-11 flex-none overflow-y-auto border border-gray-700 cursor-pointer leading-relaxed"
+            className="text-xs bg-gray-800/60 rounded p-2 min-h-0 flex-none overflow-y-auto border border-gray-700 cursor-pointer leading-relaxed"
             onClick={() =>
               selectedDesc && navigator.clipboard.writeText(selectedDesc)
             }
             title={selectedDesc ? "Click to copy" : undefined}
           >
             {selectedDesc ?? (
-              <span className="text-gray-500 italic">
-                Click a move to see damage details
-              </span>
+              <span className="italic">Click a move to see damage details</span>
             )}
           </div>
         </>
