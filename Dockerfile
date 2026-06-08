@@ -5,7 +5,7 @@ FROM dhi.io/node:26-alpine-sfw-dev AS builder
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 
-COPY package.json yarn.lock ./
+COPY package.json package-lock.json ./
 RUN yarn --frozen-lockfile
 
 COPY . .
