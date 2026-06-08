@@ -53,7 +53,7 @@ export default function PokemonCard({
           className={`absolute bottom-0 right-0 text-[9px] font-bold px-1 py-1 rounded-tl cursor-pointer transition-colors ${
             isMega
               ? "bg-purple-500 text-white"
-              : "bg-gray-800/80 text-gray-400 hover:bg-purple-500/60 hover:text-white"
+              : "bg-gray-800/80 hover:bg-purple-500/60 hover:text-white"
           }`}
         >
           <Image
