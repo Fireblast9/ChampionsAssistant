@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function LoadingPage() {
   return (
-    <div className="flex items-center">
+    <div className="flex items-center p-12">
       <h1 className="text-4xl">Loading...</h1>
       <Image
         src={pokeball}
