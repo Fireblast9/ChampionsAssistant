@@ -75,7 +75,7 @@ export async function createTeam(_prevState: unknown, formData: FormData) {
       pokemon[i].species,
       pokemon[i].gender,
     );
-    pokemon[i] = { ...pokemon[i], sprite: sprite };
+    pokemon[i] = { ...pokemon[i], sprite: sprite, level: 50 };
   }
 
   await connectDB();

@@ -62,6 +62,7 @@ export default function CreateTeamForm() {
       >
         {pending ? "Importing..." : "Import"}
       </button>
+      <p>Teams will be automatically set at level 50 if not already</p>
     </form>
   );
 }
