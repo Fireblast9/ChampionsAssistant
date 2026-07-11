@@ -16,7 +16,7 @@ The frontend is exposed at <https://calc.soulsbros.ch>.
 
 ### ⚙️ Prerequisites
 
-- Node.js 25
+- Node.js
 - Docker
 
 ### 🔧 Installation
