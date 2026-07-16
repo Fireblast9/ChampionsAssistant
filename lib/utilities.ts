@@ -1,5 +1,8 @@
 import { Generations } from "@smogon/calc";
 
+export const DEFAULT_NAVIGATION_WARNING =
+  "Leave the page? You have unsaved changes that will be lost.";
+
 export const STAT_LABELS: Record<string, string> = {
   hp: "HP",
   atk: "Atk",

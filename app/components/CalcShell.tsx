@@ -2,7 +2,12 @@
 
 import { IPokemon } from "@/lib/models/team";
 import { Team } from "@/lib/types";
-import { DEFAULT_FIELD, type FieldState } from "@/lib/utilities";
+import {
+  DEFAULT_FIELD,
+  DEFAULT_NAVIGATION_WARNING,
+  type FieldState,
+} from "@/lib/utilities";
+import { useNavigationGuard } from "next-navigation-guard";
 import { useState } from "react";
 import MovePanel, { FieldPanel } from "./Calculator";
 import TeamViewer from "./TeamViewer";
@@ -18,6 +23,13 @@ export default function CalcShell({
 
   const [atk1, atk2] = attackers;
   const [def1, def2] = defenders;
+
+  // prompt user if they change the field conditions
+  // (team selection is handled in TeamViewer component)
+  useNavigationGuard({
+    enabled: JSON.stringify(field) != JSON.stringify(DEFAULT_FIELD),
+    confirm: () => window.confirm(DEFAULT_NAVIGATION_WARNING),
+  });
 
   return (
     <div className="flex justify-between mx-4">
