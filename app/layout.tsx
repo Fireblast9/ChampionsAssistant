@@ -1,5 +1,6 @@
 import githubLogo from "@/images/githubLogo.png";
 import type { Metadata } from "next";
+import { NavigationGuardProvider } from "next-navigation-guard";
 import localFont from "next/font/local";
 import Image from "next/image";
 import Link from "next/link";
@@ -42,7 +43,7 @@ export default function RootLayout({
   return (
     <html lang="en-CH" className="h-full antialiased">
       <body className={`${nogard.className} min-h-full flex flex-col`}>
-        {children}
+        <NavigationGuardProvider>{children}</NavigationGuardProvider>
         <footer className="flex space-x-2 p-4 items-center justify-center">
           <p>&copy;{new Date().getFullYear()} Fireblast9</p>
           <Link

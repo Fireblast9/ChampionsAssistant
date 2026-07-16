@@ -1,8 +1,9 @@
 "use client";
 
-import { ITeam, IPokemon } from "@/lib/models/team";
+import { IPokemon, ITeam } from "@/lib/models/team";
 import { Team } from "@/lib/types";
-import { MEGA_MAP } from "@/lib/utilities";
+import { DEFAULT_NAVIGATION_WARNING, MEGA_MAP } from "@/lib/utilities";
+import { useNavigationGuard } from "next-navigation-guard";
 import { useState } from "react";
 import PokemonCard from "./PokemonCard";
 import TeamSelect from "./TeamSelect";
@@ -40,6 +41,12 @@ export default function TeamViewer({
   const [team, setTeam] = useState<ITeam | null>(null);
   const [selected, setSelected] = useState<Pair>([null, null]);
   const [megaActive, setMegaActive] = useState<Set<string>>(new Set());
+
+  // prompt user if they change the team
+  useNavigationGuard({
+    enabled: team != null,
+    confirm: () => window.confirm(DEFAULT_NAVIGATION_WARNING),
+  });
 
   function handleTeamChange(newTeam: ITeam | null) {
     setTeam(newTeam);
