@@ -6,7 +6,11 @@ interface HomeButtonProps {
   children: React.ReactNode;
 }
 
-export default function HomeButton({ href, extraClasses, children }: HomeButtonProps) {
+export default function HomeButton({
+  href,
+  extraClasses,
+  children,
+}: Readonly<HomeButtonProps>) {
   return (
     <Link
       href={{ pathname: href }}
